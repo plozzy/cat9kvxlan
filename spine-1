@@ -1,0 +1,75 @@
+Spine-01# show running-config
+hostname Spine-01
+!
+ip routing
+!
+ip multicast-routing
+!
+interface Loopback0
+ip address 172.16.255.1 255.255.255.255
+ip ospf 1 area 0
+!
+interface Loopback1
+ip address 172.16.254.1 255.255.255.255
+ip ospf 1 area 0
+!
+interface Loopback2
+ip address 172.16.255.255 255.255.255.255
+ip pim sparse-mode
+ip ospf 1 area 0
+!
+interface GigabitEthernet1/0/1
+no switchport
+ip address 172.16.13.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
+!
+interface GigabitEthernet1/0/2
+no switchport
+ip address 172.16.14.1 255.255.255.0
+ip pim sparse-mode
+ip ospf network point-to-point
+ip ospf 1 area 0
+!
+router ospf 1
+router-id 172.16.255.1
+!
+router bgp 65001
+template peer-policy RR-PP
+route-reflector-client
+send-community both
+exit-peer-policy
+!
+template peer-session RR-PS
+remote-as 65001
+update-source Loopback0
+exit-peer-session
+!
+bgp router-id 172.16.255.1
+bgp log-neighbor-changes
+no bgp default ipv4-unicast
+neighbor 172.16.255.2 remote-as 65001
+neighbor 172.16.255.2 update-source Loopback0
+neighbor 172.16.255.3 inherit peer-session RR-PS
+neighbor 172.16.255.4 inherit peer-session RR-PS
+!
+address-family ipv4
+exit-address-family
+!
+address-family l2vpn evpn
+neighbor 172.16.255.2 activate
+neighbor 172.16.255.2 send-community both
+neighbor 172.16.255.3 activate
+neighbor 172.16.255.3 send-community extended
+neighbor 172.16.255.3 inherit peer-policy RR-PP
+neighbor 172.16.255.4 activate
+neighbor 172.16.255.4 send-community extended
+neighbor 172.16.255.4 inherit peer-policy RR-PP
+exit-address-family
+!
+ip pim rp-address 172.16.255.255
+ip msdp peer 172.16.254.2 connect-source Loopback1 remote-as 65001
+ip msdp cache-sa-state
+!
+end
