@@ -18,14 +18,14 @@ ip address 172.16.255.255 255.255.255.255
 ip pim sparse-mode
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/1
+interface GigabitEthernet1
 no switchport
 ip address 172.16.23.2 255.255.255.0
 ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/2
+interface GigabitEthernet2
 no switchport
 ip address 172.16.24.2 255.255.255.0
 ip pim sparse-mode
