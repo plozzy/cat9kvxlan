@@ -65,7 +65,7 @@ ip pim sparse-mode
 ip ospf network point-to-point
 ip ospf 1 area 0
 !
-interface GigabitEthernet1/0/10
+interface GigabitEthernet1/0/5
 switchport mode trunk
 !
 interface Vlan101
